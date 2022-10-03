@@ -1,0 +1,18 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<form action="{% url 'new_listing' %}" method="post" id="add_listing">
+    {% csrf_token %}
+    <div class="form-group">
+    {{ form | safe }}
+    </div>
+    <div class="form-group">
+        <input class="btn btn-primary" type="submit" value="Add listing">
+    </div>
+</form>
+<style type="">
+    input[type='file'] {
+       color: transparent;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<!-- --- message --- -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+ {% endif %}
+
+<!-- --- listing data --- -->
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+            {% if listing.picture %}
+                <img width="150" class="rounded" src="{{ listing.picture }}" alt="{{listing.title}}">
+            {% endif %}
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <div><h3>{{ listing.title }}</h3></div>
+        <div><p>{{ listing.description }}</p></div>
+        <div><p>Category: {{ listing.listing_category }}</p></div>
+        <div><p>Listed by: {{ listing.user }}</p></div>
+        {% if listing.highest_bid %}
+            <div><h5>Current Price: {{ listing.highest_bid }}$</h5></div>
+        {% else %}
+            <div><h5>Current Price: {{ listing.start_bid }}$</h5></div>
+        {% endif %}
+        <div><h5>start Price: {{ listing.start_bid }}$</h5></div>
+        <div><small>{{ listing.publication_date }}</small></div>
+    </div>
+</div>
+</div>
+
+<div class="form-group"></div>
+    {% if owner_listing %}
+        <div class="container">
+        <form action="{% url 'close_auction' listing.id %}" method="post" class="form group">
+        {% csrf_token %}
+        <input class="btn btn-primary" name="submit" type="submit" value="close the auction">
+</div>
+    {% elif user.is_authenticated %}
+
+
+    <!-- --- watchlist form --- -->
+    <div class="container">
+        <form action="{% url 'add_remove_Watchlist' listing.id %}" method="post" class="form group">
+            {% csrf_token %}
+            {% if listing.id in listing_ids %}
+                <input class="btn btn-primary" name="submit" type="submit" value="Remove form Watchlist">
+            {% else %}
+                <input class="btn btn-primary" name="submit" type="submit" value="Add to Watchlist">
+            {% endif %}
+        </form>
+
+    <div class="form-group"></div>
+
+    <!-- --- bids form --- -->
+    <form action="{% url 'bid' listing.id %}" method="post" class="form-group">
+        <div class="form-inline">
+        {% csrf_token %}
+        {{ bid_form }}
+       <input class="btn btn-primary" type="submit" value="Bid">
+    </div> 
+    </form>
+
+    <!-- --- Comments form--- -->
+    <form action="{% url 'comment' listing.id %}" method="post" >
+        {% csrf_token %}
+        <div class="form-group">
+            {{ comment_form }}
+        </div>
+        <div class="form-group">
+            <input class="btn btn-primary" type="submit" value="Comment">
+        </div>
+    </form>
+    </div>
+    {% endif %}
+
+<!-- --- Comments --- -->
+{% if comments %}
+<div class="container">
+    {% for comment in comments %}
+    
+    <div class="card mb-4">
+        <div class="card-body">
+          <p>{{comment.user_comment}}</p>
+
+          <div class="d-flex justify-content-between">
+            <div class="d-flex flex-row align-items-center">
+                
+              <p class="small mb-0 ms-2">{{comment.comment_date}}</p>
+            </div>
+            <div class="d-flex flex-row align-items-center">
+                
+                <p class="small mb-0 ms-2">{{comment.user}}</p>
+              </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}
